@@ -8033,6 +8033,538 @@ mossfw_input_delete(in);
 
 }
 
+void test_mossfw_release_delivereddata_ar_001(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typearray;
+int empty = 0;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = in;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_002(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typearray;
+int empty = 0;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = NULL;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_003(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typesingle;
+int empty = 0;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = in;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_004(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typearray;
+int empty = 1;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = in;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_005(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typearray;
+int empty = 1;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = NULL;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_006(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typesingle;
+int empty = 1;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = in;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
+void test_mossfw_release_delivereddata_ar_007(void)
+{
+
+uint32_t typesingle =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_SINGLE;
+uint32_t typearray =
+    MOSSFW_DATA_TYPE_CHAR |
+    MOSSFW_DATA_TYPEGRP_V1 | 
+    MOSSFW_DATA_TYPENAME_ACCEL | 
+    MOSSFW_DATA_TYPEARRAY_ARRAY;
+int size = sizeof(mossfw_data_v1c_t);
+uint32_t type = typesingle;
+int empty = 0;
+mossfw_input_t *in = mossfw_input_create(type, 1);
+TEST_ASSERT(in != NULL);
+mossfw_output_t *out = mossfw_output_create(type);
+TEST_ASSERT(out != NULL);
+mossfw_callback_op_t *op = mossfw_callback_op_create(test_app_result1_cb, 0, 0);
+TEST_ASSERT(op != NULL);
+int waiterr = mossfw_set_waitcondition(in, 2 * size, op);
+TEST_ASSERT(waiterr == OK);
+int errb = mossfw_bind_inout(out, in, ~0u);
+TEST_ASSERT(errb == OK);
+mossfw_onedata_t idatasingle;
+idatasingle.xc.x = 9;
+mossfw_allocator_t *allocator =
+    mossfw_fixedmem_create(size, 1);
+mossfw_data_t *idataarray =
+    mossfw_data_alloc(allocator, size, 1);
+idataarray->data.xc[0].x = 0;
+idataarray->data_bytes = size;
+if (!empty) {
+    if (type == typesingle) {
+        int errd = mossfw_deliver_data(out, &idatasingle);
+        TEST_ASSERT(errd == OK);
+    } else {
+        int errd = mossfw_deliver_dataarray(out, idataarray);
+        TEST_ASSERT(errd == OK);
+    }
+}
+mossfw_input_t *input = NULL;
+
+
+
+mossfw_data_t *odata =
+    mossfw_release_delivereddata_array(input);
+
+
+
+if (input != NULL && type == typearray && !empty) {
+    TEST_ASSERT(odata != NULL);
+} else {
+    TEST_ASSERT(odata == NULL);
+}
+if (odata != NULL) {
+    TEST_ASSERT(odata->data.xc == idataarray->data.xc);
+} else if (type == typearray && !empty) {
+    mossfw_data_t *data =
+        mossfw_get_delivereddata_array(in, size, NULL);
+    TEST_ASSERT(data != NULL);
+    mossfw_data_free(data);
+}
+mossfw_data_free(odata);
+mossfw_data_free(idataarray);
+int ferr = mossfw_fixedmem_delete(allocator);
+TEST_ASSERT(ferr == OK);
+mossfw_output_delete(out);
+mossfw_callback_op_delete(op);
+mossfw_input_delete(in);
+
+
+}
+
 void test_mossfw_deliverback_dataarray_001(void)
 {
 
