@@ -25,5 +25,5 @@ clean:
 
 cov:
 	$(foreach mk,$(MKFILES),$(call cov_test,$(mk)))
-	lcov -c -d . --rc lcov_branch_coverage=1 -o lcov.info
+	lcov -c -d . --exclude '*mossfw/test/framework/unittest/*' --rc lcov_branch_coverage=1 -o lcov.info
 	genhtml -o lcov --branch-coverage -p C: lcov.info

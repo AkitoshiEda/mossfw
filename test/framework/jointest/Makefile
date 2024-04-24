@@ -54,7 +54,8 @@ CSRCS = sar/sar.c sar/adjustgyro.c sar/average.c sar/transformaxismatrix.c sar/t
     eis_error/eis_error.c eis_error/eissource_error.c eis_error/eiscalibration_error.c eis_error/lpf_error.c eis_error/transform_error.c \
     eis_error/adjustline_error.c eis_error/selector_error.c eis_error/transformaxes_error.c eis_error/dcoffset_error.c eis_error/averageacc_error.c \
     eis_error/stableacc_error.c eis_error/estimateposeacc_error.c eis_error/complementaryfilter_error.c eis_error/axisseparation_error.c \
-    eis_error/viewpoint_error.c eis_error/poseresample_error.c eis_error/eissink_error.c eis_error/outputdata_error.c eis_error/eisallocator_error.c 
+    eis_error/viewpoint_error.c eis_error/poseresample_error.c eis_error/eissink_error.c eis_error/outputdata_error.c eis_error/eisallocator_error.c \
+    releasetest/releasetest.c releasetest/releasetest_sink.c
 CXXSRCS = sar/testestimator_frameworkjointest.cpp  sar/testestimatorif.cpp
 MAINSRC = main.c
 
@@ -115,4 +116,3 @@ clean :
 	$(RM) jointest
 	$(RM) $(OBJ)
 
-include Make.dep

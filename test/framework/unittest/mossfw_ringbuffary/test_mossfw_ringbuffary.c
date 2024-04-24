@@ -547,6 +547,87 @@ mossfw_ringbuffarray_delete(buff);
 mossfw_fixedmem_delete(allocator);
 
 
+
+}
+
+void test_mossfw_ringbuffarray_releasedat_001(void)
+{
+
+int block_sz = sizeof(int32_t);
+int block_num = 1;
+const int expected_value = 9;
+mossfw_ringbuffarray_t *buff =
+    mossfw_ringbuffarray_create(block_num);
+mossfw_allocator_t *allocator = mossfw_fixedmem_create(block_sz, block_num);
+TEST_ASSERT(allocator != NULL);
+mossfw_data_t *blk = mossfw_data_alloc(allocator, block_sz, true);
+TEST_ASSERT(blk != NULL);
+blk->data.v1i32[0].x = expected_value;
+blk->data_bytes = block_sz;
+bool errset = mossfw_ringbuffarray_setdata(buff, blk, 1);
+TEST_ASSERT(errset == true);
+mossfw_ringbuffarray_t *ary = buff;
+
+
+
+mossfw_data_t *ret = mossfw_ringbuffarray_releasedata(ary);
+
+
+
+if (ary == NULL) {
+    TEST_ASSERT(ret == NULL);
+} else {
+    TEST_ASSERT(ret != NULL);
+}
+if (ret != NULL) {
+    TEST_ASSERT(ret->data.v1i32[0].x == expected_value);
+    mossfw_data_free(ret);
+}
+mossfw_data_free(blk);
+mossfw_ringbuffarray_delete(buff);
+mossfw_fixedmem_delete(allocator);
+
+
+}
+
+void test_mossfw_ringbuffarray_releasedat_002(void)
+{
+
+int block_sz = sizeof(int32_t);
+int block_num = 1;
+const int expected_value = 9;
+mossfw_ringbuffarray_t *buff =
+    mossfw_ringbuffarray_create(block_num);
+mossfw_allocator_t *allocator = mossfw_fixedmem_create(block_sz, block_num);
+TEST_ASSERT(allocator != NULL);
+mossfw_data_t *blk = mossfw_data_alloc(allocator, block_sz, true);
+TEST_ASSERT(blk != NULL);
+blk->data.v1i32[0].x = expected_value;
+blk->data_bytes = block_sz;
+bool errset = mossfw_ringbuffarray_setdata(buff, blk, 1);
+TEST_ASSERT(errset == true);
+mossfw_ringbuffarray_t *ary = NULL;
+
+
+
+mossfw_data_t *ret = mossfw_ringbuffarray_releasedata(ary);
+
+
+
+if (ary == NULL) {
+    TEST_ASSERT(ret == NULL);
+} else {
+    TEST_ASSERT(ret != NULL);
+}
+if (ret != NULL) {
+    TEST_ASSERT(ret->data.v1i32[0].x == expected_value);
+    mossfw_data_free(ret);
+}
+mossfw_data_free(blk);
+mossfw_ringbuffarray_delete(buff);
+mossfw_fixedmem_delete(allocator);
+
+
 }
 
 void test_mossfw_ringbuff_setdata_001(void)

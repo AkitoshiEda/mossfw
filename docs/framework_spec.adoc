@@ -251,7 +251,7 @@ digraph component {
 
 ==== Input-Output Between Components
 
-Data input and output between components are shown in <<graphid_componentio>>. Data sent to an output using xref:_mossfw_deliver_data[xrefstyle=basic] or xref:_mossfw_deliver_dataarray[xrefstyle=basic] is immediately queued by the Framework to the input of the destination. If the data accumulated in the input queue exceeds a threshold, further component operations are called. When data is used in a component operation, if xref:_mossfw_get_delivereddata_single[xrefstyle=basic] or xref:_mossfw_get_delivereddata_array[xrefstyle=basic] is called to retrieve data from the input queue, the data is removed from the input queue.
+Data input and output between components are shown in <<graphid_componentio>>. Data sent to an output using xref:_mossfw_deliver_data[xrefstyle=basic] or xref:_mossfw_deliver_dataarray[xrefstyle=basic] is immediately queued by the Framework to the input of the destination. If the data accumulated in the input queue exceeds a threshold, further component operations are called. When data is used in a component operation, if xref:_mossfw_get_delivereddata_single[xrefstyle=basic], xref:_mossfw_get_delivereddata_array[xrefstyle=basic] or xref:_mossfw_release_delivereddata_array[xrefstyle=basic] is called to retrieve data from the input queue, the data is removed from the input queue.
 
 [#graphid_componentio]
 [graphviz, format=svg, align=center]
@@ -259,6 +259,7 @@ Data input and output between components are shown in <<graphid_componentio>>. D
 --
 digraph component {
     rankdir=LR
+    compound=true
     subgraph cluster0 {
         label="component0"
         style=rounded
@@ -288,7 +289,10 @@ digraph component {
             >
         ]  
         op1 [shape=box]
-        in1 -> op1 [label="mossfw_get_delivereddata_single/array"]
+        in1 -> op1 [
+            label="mossfw_get_delivereddata_single/array\nmossfw_release_delivereddata_array"
+            weight=2
+        ]
     }
     subgraph cluster2 {
         label="component2"
@@ -312,7 +316,10 @@ digraph component {
             >
         ]  
         op2 [shape=box]
-        in2 -> op2 [label="mossfw_get_delivereddata_single/array"]
+        in2 -> op2 [
+            label="mossfw_get/release_delivereddata_single/array\nmossfw_release_delivereddata_array"
+            weight=2
+        ]
     }
     out0 -> in1
     out0 -> in2
@@ -340,6 +347,7 @@ These methods depend on the APIs and parameters listed in <<tableid_singlearray_
 |API to retrieve data from input queue
 |mossfw_get_delivereddata_single
 |mossfw_get_delivereddata_array
+mossfw_release_delivereddata_array
 
 |Flags to use for the <<_mossfw_input_create>> and <<_mossfw_output_create>> arguments type
 |MOSSFW_DATA_TYPEARRAY_SINGLE
@@ -353,7 +361,7 @@ When using array data to input and output data between components, dynamically a
 Because the memory allocated by the memory allocator is referenced across multiple components, it is difficult to map between allocation and release. Therefore, reference counters are used to manage allocations and releases. A reference counter is a variable that exists one for each dynamically allocated memory area and holds the number of locations referencing that memory. The number of references to memory is managed as follows:
 
 * Allocating a new memory area by calling <<_mossfw_data_alloc>> increases the reference counter by 1. When it finishes referring to that memory, it calls <<_mossfw_data_free>> to reduce the reference counter by one. (<<sourceid_alloc>>)
-* When <<_mossfw_get_delivereddata_array>> is called to retrieve data from the input queue, the reference counter is incremented by 1. When it finishes referring to that memory, it calls <<_mossfw_data_free>> to reduce the reference counter by one. (<<sourceid_get_delivereddata>>)
+* When <<_mossfw_get_delivereddata_array>> or <<_mossfw_release_delivereddata_array>> is called to retrieve data from the input queue, the reference counter is incremented by 1. When it finishes referring to that memory, it calls <<_mossfw_data_free>> to reduce the reference counter by one. (<<sourceid_get_delivereddata>>)
 * If there is a reference to a memory region in the formal argument of the function, the reference counter is incremented by one by calling <<_mossfw_data_refer>> when the function starts. When the function exits, it calls <<_mossfw_data_free>> to reduce the reference counter by one. (<<sourceid_sensordata>>)
 * Increase the reference counter by 1 by calling <<_mossfw_data_refer>> when starting a new reference to the memory region. When it finishes referring to that memory, it calls <<_mossfw_data_free>> to reduce the reference counter by one.
 
@@ -2155,6 +2163,43 @@ array data back into the input queue. If only a portion of the array data is to 
 |false
 |Abnormal termination
 |===
+
+==== mossfw_release_delivereddata_array
+
+.Features
+--
+Release an array in the input object's buffer after stopping data transition.
+If there is no data in the input object's buffer, return NULL immediately.
+--
+
+[caption=]
+[cols="2,1,6,1"]
+.Argument
+|===
+|Type |Argument Name |Description |IN/OUT
+
+|<<_mossfw_input_t>> *
+|in
+|Input object from which to retrieve data
+|IN/OUT
+|===
+
+[caption=]
+[cols="1,4"]
+.Return value
+|===
+|Return value |Description
+
+|Not null
+|Released data
+
+|NULL
+|No data to be released
+|===
+
+IMPORTANT: You must always call <<_mossfw_data_free>> when you are finished referencing the data you have retrieved.
+
+IMPORTANT: You must call <<_mossfw_release_delivereddata_array>> after stopping data transition.
 
 === Memory Allocator API
 

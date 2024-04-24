@@ -30,6 +30,7 @@
 #include "attitude_error/attitude_error.h"
 #include "uc_error/uc_error.h"
 #include "eis_error/eis_error.h"
+#include "releasetest/releasetest.h"
 
 int main(void)
 {
@@ -41,5 +42,6 @@ int main(void)
     attitude_error();
     eis();
     eis_error();
+    releasetest();
     return 0;
 }
