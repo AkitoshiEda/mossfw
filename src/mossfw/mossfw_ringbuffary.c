@@ -302,6 +302,44 @@ mossfw_data_t *mossfw_ringbuffarray_getdata(mossfw_ringbuffarray_t *ary,
 }
 
 /****************************************************************************
+ * name: mossfw_ringbuffarray_releasedata
+ ****************************************************************************/
+
+mossfw_data_t *mossfw_ringbuffarray_releasedata(mossfw_ringbuffarray_t *ary)
+{
+  mossfw_data_t *ret = NULL;
+  mossfw_data_container_t *ctr = NULL;
+
+  if (ary)
+    {
+      mossfw_lock_take(&ary->lock);
+
+      if (mossfw_ringbuffarray_isempty_nolock(ary))
+        {
+          mossfw_lock_give(&ary->lock);
+          return NULL;
+        }
+
+      ctr = ary->stored;
+      ret = ctr->data;
+      ctr->data = NULL; /* This effects as free the container */
+
+      ary->stored = ctr->next;
+      ary->stored_num--;
+      ary->stored_bytes -= (ret->data_bytes - ary->usedidx);
+
+      ary->usedidx = 0;
+
+      mossfw_lock_give(&ary->lock);
+
+      /* No need delete and refer for mamupilating reference counter.
+       * Because just increment and decrement it.
+       */
+    }
+
+  return ret;
+}
+/****************************************************************************
  * name: mossfw_ringbuffarray_backdatarest
  ****************************************************************************/
 

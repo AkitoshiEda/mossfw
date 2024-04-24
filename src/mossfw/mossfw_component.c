@@ -827,6 +827,25 @@ bool mossfw_deliverback_dataarray(mossfw_input_t *in, mossfw_data_t *dat,
 }
 
 /****************************************************************************
+ * name: mossfw_release_delivereddata_array
+ ****************************************************************************/
+
+mossfw_data_t *mossfw_release_delivereddata_array(mossfw_input_t *in)
+{
+  mossfw_data_t *ret = NULL;
+
+  if (in)
+    {
+      if (MOSSFW_DATA_TYPE_ISARRAY(in->type))
+        {
+          ret = mossfw_ringbuffarray_releasedata(in->ringbuff.array);
+        }
+    }
+
+  return ret;
+}
+
+/****************************************************************************
  * name: mossfw_get_delivereddata_array
  ****************************************************************************/
 
